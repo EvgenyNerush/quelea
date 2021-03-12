@@ -20,42 +20,39 @@
 
 using namespace std;
 
-double a0 = 2;
+double a0 = 1;
 double dt = 0.1;
-double t_end = 10;
+double t_end = M_PI;
 
-Vec3<double> sine_field(double t, Vec3<double> r) {
-    return Vec3<double>(a0 * sin(r.x - t), 0, 0);
+Fields sine_ex(double t, Vec3<double> r) {
+    return Fields( a0 * cos(t), 0, 0, 0, 0, 0);
 }
 
-Vec3<double> zero_f(double t, Vec3<double> r) {
-    return zero<double>;
-}
-
+// Например, нам нужны частицы такого вида - с индексом. Пушер, описанный в particles.cpp, с ними
+// может работать: ему нужны только x, y, z, px, py, pz, g, остальные поля класса могут быть
+// любыми. Здесь было бы достаточно duck typing-а, но концепты (1) дают понятный код, пользователю
+// не надо вчитываться и догадываться, чего именно пушер хочет от частицы, (2) нет бардака, который
+// можно было бы развести с просто "коллекцией" разных пушеров, которым нужны _разные_ частицы, (3)
+// понятные сообщения компилятора в случае ошибок (я надеюсь).
 class Indexed_particle {
     public:
     double x, y, z, px, py, pz, g;
     long index;
 };
 
-auto pusherf = [](double t, Indexed_particle& p) {
-    return Pusher3D3P< Pusher_type::Vay
-                , Indexed_particle
-                , double
-                , double
-                , double
-                , std::function< Vec3<double>(double, Vec3<double>) >
-                , std::function< Vec3<double>(double, Vec3<double>) > >::step(p, 1, dt, t, sine_field, zero_f);
+// Поскольку нам не нужно всё время менять шаг, заряд частицы или функцию, задающую поле, мы
+// фиксируем эти параметры; остаётся только функция (lambda function) глобального времени и
+// частицы, которую мы хотим "продвинуть".
+auto pusher_f = [](double t, Indexed_particle& p) {
+    return Vay_pusher_functional<Indexed_particle>::step(p, 1, dt, t, sine_ex);
 };
 
 int main() {
     Indexed_particle p;
     p.px = 0;
-    p.py = 0;
-    p.pz = 0;
     for (double t = 0; t < t_end; t += dt) {
-        cout << p.px << '\t' << p.py << '\t' << p.pz << '\n';
-        pusherf(t, p);
+        cout << t << '\t' << p.px << '\n';
+        pusher_f(t, p);
     }
     return 0;
 }
