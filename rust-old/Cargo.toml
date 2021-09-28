@@ -1,0 +1,13 @@
+[package]
+name = "quelea"
+version = "0.1.1"
+authors = ["Evgeny Nerush <eugene.nerush@gmail.com>, Alexander Samsonov"]
+
+[lib]
+name = "quelea"
+path = "src/quelea.rs"
+crate-type = ["dylib"]
+
+[dependencies]
+libc = "*"
+rand = "0.3.0"
