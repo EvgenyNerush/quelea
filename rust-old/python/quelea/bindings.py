@@ -60,11 +60,12 @@ if compiled_succ:
             return t0 + np.arange(len(ps)) * dt
 
         def map_fields(rt, ftype, fparam):
-            n = len(rt) // 4
+            nrt = len(rt)
+            n = nrt // 4
             nfparam = len(fparam)
             f = lib.c_map_fields
             f.restype = POINTER(c_double * (6 * n))
-            c_rt = (c_double * (4 * n))(*rt)
+            c_rt = (c_double * nrt)(*rt)
             fp = (c_double * nfparam)(*fparam)
             v = f(c_size_t(n), byref(c_rt), c_int32(ftype), c_size_t(nfparam), byref(fp))
             w = np.array(v.contents)
