@@ -1018,10 +1018,9 @@ fn c_map_fields(npoints: size_t, rt: *const c_double, ftype: c_int, nfparam: siz
     p as *const c_double
 }
 
-#[no_mangle]
-pub extern "C"
 // function useful to test the linking of the lib
-fn test_fun() -> () {
-    println!("Hello from Rust code!")
+#[no_mangle]
+pub extern fn hello() {
+    println!("Hello from Rust code!");
 }
 
