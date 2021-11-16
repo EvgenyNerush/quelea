@@ -109,16 +109,20 @@ fn plane_wave(r: (f64, f64, f64), t: f64, a0: f64, kx: f64, ky: f64, kz: f64, E0
 pub const E: f64 = 2.71828182845904523536028747135266250f64;
 fn gauss(r: (f64,f64, f64), t: f64, width: f64, a0: f64) -> EM {
     let x = r.0;
+    //println!("{}", );
+    let fields =
     EM {
         //let E0 = a0 * f64::cos(x -t)
         //let exponent = f64::pow(E, f64::powf(r/r0,2.0));
-        ex: 0.0,//a0 * f64::cos(x - t) * f64::powf(E, -1.0*f64::powf(x/width,2.0)),
+        ex: a0 * f64::cos(x - t),//* f64::powf(E, -1.0*f64::powf(x/width,2.0)),
         ey: 0.0,
         ez: 0.0,
         bx: 0.0,
-        by: 0.0,
-        bz: a0
-    }
+        by: a0 * f64::cos(x - t), // f64::powf(E, -1.0*f64::powf(x/width,2.0)),
+        bz: 0.0,
+    };
+    //println!("{}", fields.ex);
+    return fields;
 }
 // Вращающееся электрическое поле для сравнения с аналитическим решением из Зельдовича
 // Вращение происходит вокруг оси, задаваемой вектором k
@@ -893,8 +897,8 @@ fn fields(ftype: i32, fparam: Vec<f64>) -> Box<Fn(V, f64) -> EM> {
         },
         12 => Box::new(move |r, t| call!(double_standing_wave(r, t)(_,_,_,_,_) fparam)), 
         13 => Box::new(move |r, t| call!(cosine_pulse(r, t)(_,_) fparam)),
-        _ => Box::new(     |r, t| EM { ex: 0.0, ey: 0.0, ez: 0.0, bx: 0.0, by: 0.0, bz: 0.0 }),
         14 => Box::new(move |r, t| call!(gauss(r,t)(_,_) fparam)),
+        _ => Box::new(     |r, t| EM { ex: 0.0, ey: 0.0, ez: 0.0, bx: 0.0, by: 0.0, bz: 0.0 }),
     };
     f
 }

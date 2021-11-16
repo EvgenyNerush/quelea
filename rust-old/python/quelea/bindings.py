@@ -15,7 +15,7 @@ if compiled_succ:
         lib = cdll.LoadLibrary(libfile)
         
         #see https://docs.python.org/3/library/ctypes.html
-        # dafaul lambda value is 1 um
+        # dafault lambda value is 1 um
         def drive_particle(s0, t0, dt, n, ftype, fparam, lmbda = 1, rf_scheme = 0):
             nfparam = len(fparam)
             f = lib.drive_particle_binding
