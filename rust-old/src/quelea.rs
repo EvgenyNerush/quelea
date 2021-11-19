@@ -237,6 +237,35 @@ fn dms_field(r: V, t: f64, a0: f64, theta: f64) -> EM {
     }
 }
 
+// Reversed field of emitting dipole along the z axis. The envelope of the field is such that the
+// energy coming to the center grows linearly with time. The amplitude `a0` is reached at `r_max`.
+fn reversed_dipole_emission(r: (f64, f64, f64), t: f64, a0: f64, r_max: f64) -> EM {
+    let r_mod = f64::sqrt(r.0 * r.0 + r.1 * r.1 + r.2 * r.2);
+    let n = if r_mod != 0.0 {
+        (r.0 / r_mod, r.1 / r_mod, r.2 / r_mod)
+    } else {
+        (0.0, 0.0, 0.0)
+    };
+    // z0 x n
+    let z0_n = (-n.1, n.0, 0.0);
+    // [n, [z0, n]]
+    let n_z0_n =
+        ( -n.2 * n.0
+        , n.1 * n.2
+        , n.0 * n.0 + n.1 * n.1
+        );
+    let phi = t - r_mod;
+    let envelope = f64::sqrt(r_mod / r_max);
+    let a = a0 * f64::sin(phi) / r_mod * envelope;
+    EM { ex: n_z0_n.0 * a
+       , ey: n_z0_n.1 * a
+       , ez: n_z0_n.2 * a
+       , bx: z0_n.0 * a
+       , by: z0_n.1 * a
+       , bz: z0_n.2 * a
+       }
+}
+
 /* Периодическое (во времени) электромагнитное поле, задаваемое потенциалом A_phi(r, z) (phi - угол
  * цилиндрической системы координат, относительно вращения по phi потенциал симметричен; потенциал
  * также считается симметричным (чётным) относительно преобразовния z -> -z).
@@ -876,6 +905,7 @@ fn fields(ftype: i32, fparam: Vec<f64>) -> Box<Fn(V, f64) -> EM> {
         },
         12 => Box::new(move |r, t| call!(double_standing_wave(r, t)(_,_,_,_,_) fparam)), 
         13 => Box::new(move |r, t| call!(cosine_pulse(r, t)(_,_) fparam)),
+        14 => Box::new(move |r, t| call!(reversed_dipole_emission(r,t)(_,_) fparam)),
         _ => Box::new(     |r, t| EM { ex: 0.0, ey: 0.0, ez: 0.0, bx: 0.0, by: 0.0, bz: 0.0 }),
     };
     f
