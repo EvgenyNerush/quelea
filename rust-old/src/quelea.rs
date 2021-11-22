@@ -238,7 +238,8 @@ fn dms_field(r: V, t: f64, a0: f64, theta: f64) -> EM {
 }
 
 // Reversed field of emitting dipole along the z axis. The envelope of the field is such that the
-// energy coming to the center grows linearly with time. The amplitude `a0` is reached at `r_max`.
+// energy coming to the center grows approximately linearly with time. The amplitude about `a0` is
+// reached at `r_max`.
 fn reversed_dipole_emission(r: (f64, f64, f64), t: f64, a0: f64, r_max: f64) -> EM {
     let r_mod = f64::sqrt(r.0 * r.0 + r.1 * r.1 + r.2 * r.2);
     let n = if r_mod != 0.0 {
@@ -255,7 +256,10 @@ fn reversed_dipole_emission(r: (f64, f64, f64), t: f64, a0: f64, r_max: f64) -> 
         , n.0 * n.0 + n.1 * n.1
         );
     let phi = t - r_mod;
-    let envelope = f64::sqrt(r_mod / r_max);
+    let s = r_mod / r_max;
+    let envelope = f64::sqrt( s
+                            - s * f64::exp(-f64::powf(s/0.1, 3.0))
+                            - s * ( 1.0 - f64::exp(-f64::powf(s, 20.0)) ) );
     let a = a0 * f64::sin(phi) * r_max / r_mod * envelope;
     EM { ex: n_z0_n.0 * a
        , ey: n_z0_n.1 * a
