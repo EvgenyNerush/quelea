@@ -258,7 +258,7 @@ fn reversed_dipole_emission(r: (f64, f64, f64), t: f64, a0: f64, r_max: f64) -> 
     let phi = t - r_mod;
     let s = r_mod / r_max;
     let envelope = f64::sqrt( s
-                            - s * f64::exp(-f64::powf(s/0.1, 3.0))
+                            - s * f64::exp(-f64::powf(s/0.2, 4.0))
                             - s * ( 1.0 - f64::exp(-f64::powf(s, 20.0)) ) );
     let a = a0 * f64::sin(phi) * r_max / r_mod * envelope;
     EM { ex: n_z0_n.0 * a
