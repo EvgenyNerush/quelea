@@ -14,29 +14,53 @@ trait CompositePusher<P: Particle>: SimplePusher<P> {
     fn with(&self, pusher: SimplePusher<P>) -> SimplePusher<P>;
 }
 
+/*trait Particle3r: Particle {
+    fn r(&self) -> &V3;
+}*/
+
 // trait for particles...
+trait RelativisticParticle3p: Particle {
+    fn p(&self) -> &Vector3;
+    fn g(&self) -> f64; // or just &f64 is better here?
+                        // for cache f64 should be better?
+                        // и по смыслу g просто вычисляется через p
+}
+
+
+/* trait for particles...
 trait RelativisticParticle3r3p<V3: Vector3>: Particle {
     fn r(&self) -> &V3;
     fn p(&self) -> &V3;
     fn g(&self) -> &f64;
+}*/
+
+struct SynchrotronPusher {
+    pub chi: f64,
 }
 
-// now we define what the particles are in the memory
-struct PlainRelativisticParticle3r3p { r: SimpleV3, p: SimpleV3, g: f64 }
-
-impl Particle for PlainRelativisticParticle3r3p {}
-
-impl RelativisticParticle3r3p<SimpleV3> for PlainRelativisticParticle3r3p {
-    fn r(&self) -> &SimpleV3 { &self.r }
-    fn p(&self) -> &SimpleV3 { &self.p }
-    fn g(&self) -> &f64 { &self.g }
-}
-
-// just for testing, not really synchrotron...
-struct SynchrotronEmissionPusher { }
-
-impl SimplePusher<PlainRelativisticParticle3r3p> for SynchrotronEmissionPusher {
-    fn push(&self, particle: &PlainRelativisticParticle3r3p) -> &PlainRelativisticParticle3r3p {
-        return &particle;
+impl<P: RelativisticParticle3p> SimplePusher<P> for SynchrotronPusher {
+    fn push(&self, particle: P) -> P {
+        return particle;
     }
 }
+
+// Implementation. Now we define what the particles are in the memory
+
+/*struct RelativisticParticle_3r3p { r: Vector_3, p: Vector_3, g: f64 }
+
+impl Particle for RelativisticParticle_3r3p {}
+
+impl RelativisticParticle3r3p<Vector_3> for RelativisticParticle_3r3p {
+    fn r(&self) -> &Vector_3 { &self.r }
+    fn p(&self) -> &Vector_3 { &self.p }
+    fn g(&self) -> &f64 { &self.g }
+}*/
+
+// just for testing, not really synchrotron...
+/*struct Synchrotron_pusher { }
+
+impl SimplePusher<RelativisticParticle_3r3p> for Synchrotron_pusher {
+    fn push(&self, particle: RelativisticParticle_3r3p) -> RelativisticParticle_3r3p {
+        return particle;
+    }
+}*/
