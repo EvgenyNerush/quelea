@@ -20,7 +20,7 @@ t_end = 50 # lambda / c
 dt = 0.001
 nt = int( np.round(t_end / dt) )
 
-traj = drive_particle(s0, 0, dt, nt, 14, [width, a0], wavelength, 1) #(r: (f64,f64, f64), r0: f64, t: f64, a0: f64)
+traj = drive_particle(s0, 0, dt, nt, 15, [width, a0], wavelength, 1) #(r: (f64,f64, f64), r0: f64, t: f64, a0: f64)
 plt.plot(x(traj), g(traj))
 plt.xlabel(r"$x$")
 plt.ylabel(r"$g$")
