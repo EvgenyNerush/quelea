@@ -3,6 +3,10 @@ name = "quelea"
 version = "0.1.0"
 edition = "2018"
 
+[lib]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+#morpho = { git = "https://github.com/EvgenyNerush/morpho" }
+morpho = { path = "/home/eugn/Code/morpho" }
